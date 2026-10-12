@@ -1,6 +1,9 @@
 ---
 name: go-tests
-description: Go tests in this repository. Use when writing, changing, or reviewing `_test.go` code.
+description: Go test conventions. Apply when writing, changing, or reviewing `_test.go` code.
+applyTo: "**/*.go"
+paths:
+  - "**/*.go"
 ---
 
 # Testing Conventions
