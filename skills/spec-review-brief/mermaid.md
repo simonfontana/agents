@@ -12,7 +12,6 @@ A broken diagram can go unnoticed: some viewers show a raw error block, but othe
 - `stateDiagram-v2`, not `stateDiagram`. Only `-v2` supports composite states and notes reliably.
 - In `sequenceDiagram`, declare every participant at the top. Undeclared ones appear in first-mention order, which is rarely the order you want.
 - Keep semicolons out of labels and messages. Mermaid can read one as the end of a statement.
-- Draw before and after as two separate diagrams. Unconnected `subgraph`s render in an order the layout engine picks, not the order you wrote them, so a validator passes and the diagram still reads wrong.
 
 ## Checking the diagrams
 

@@ -6,16 +6,15 @@ disable-model-invocation: true
 
 # OpenSpec change → developer brief
 
-OpenSpec artifacts are written so a machine can implement them without asking questions. That makes them normative (`SHALL`, `WHEN`/`THEN`), deliberately redundant (each artifact stands alone, so one fact shows up in the proposal, a decision, a requirement, its scenarios, *and* a task), and written in the eternal present tense of the finished system.
+OpenSpec artifacts are written so a machine can implement them without asking questions: normative (`SHALL`, `WHEN`/`THEN`), deliberately redundant (one fact shows up in the proposal, a decision, a requirement, its scenarios, *and* a task), and in the present tense of the finished system. All three hide what a developer wants: **what will be different, and why.**
 
-All three properties hide the thing a developer actually wants: **what will be different, and why.**
+Write the brief a staff engineer writes before asking the team to review a change. The reader is a developer doing a first-pass review. The brief is an overview and a reading guide; the OpenSpec artifacts stay the authority and the reader still has to read them, so the brief says plainly what it left out. It is one argument, told once, with diagrams where they carry weight.
 
-Your job is to write the document a good staff engineer writes before asking their team to review a change. The reader is a developer on the team doing a first-pass review; the brief helps them understand the change, but the OpenSpec artifacts remain the authority for requirements. The brief is an overview and a reading guide, not a replacement: the reader still has to read the change, so the brief must say plainly what it left out. Not a summary of four files — one argument, told once, with diagrams where they carry weight.
-
-Two rules shape everything below:
+Three rules shape everything below:
 
 - **Reorganize along "what changes", never along "which file it came from."** A section per source artifact, a requirements table, or a numbered decision list mirroring `design.md` all rebuild the maze you were asked to escape. The one exception is the decision index in the last section: decision names and chosen options only, with no rationale.
 - **Architecture, behavior and flow are the subject.** Requirement enumeration and decision cataloguing are not. Rationale still matters — it just belongs inline, where it explains a design, rather than in a list of its own.
+- **State only what the sources state.** Put every gap in open questions. Specs leave gaps on purpose, and quietly filling one turns a trustworthy brief into a misleading one.
 
 ## 1. Gather the source
 
@@ -91,7 +90,7 @@ Use diagrams only where they clarify a real structural, ordering, or state chang
 | `sequenceDiagram` | Ordering: handshakes, who waits for whom, what completes before what starts |
 | `stateDiagram-v2` | A lifecycle: modes, generations, suspend/resume, retry loops |
 
-When wiring changes, **before/after wiring** often shows the delta directly. Draw it as **two separate diagrams**, "today" first and "after" second, each with a one-line lead-in.
+When wiring changes, **before/after wiring** often shows the delta directly. Draw it as **two separate diagrams**, "today" first and "after" second, each with a one-line lead-in. Unconnected `subgraph`s in one diagram render in an order the layout engine picks, so "after" can land on the left.
 
 Label conceptual diagrams as conceptual, and do not imply ownership, component boundaries, or ordering that the source does not establish. Label your edges. An unlabeled box-and-arrow graph carries almost no information. Keep each diagram under roughly a dozen nodes; if it wants to be bigger, it's two diagrams.
 
@@ -110,8 +109,6 @@ Always write one markdown file, then post a two- or three-sentence summary in th
 Do not stage or commit the brief. Do not edit the project's `.gitignore`; suggest adding `.local/change-briefs/` to it at the end of the conversation summary, so the repository owner can decide whether to ignore the directory.
 
 Never write anywhere under `openspec/`. A brief is a snapshot: it goes out of date the first time someone edits the change, and nothing updates it. An agent working on the spec reads what is under `openspec/` and cannot tell a brief from an artifact, so it would take the old version as a requirement. Inside `openspec/changes/<name>/` it is worse again — `openspec archive` moves that directory when the change ships, and every link to the brief breaks.
-
-Location alone is not enough, because an agent can still reach the brief through a search. So every brief file opens with the notice in the template below.
 
 Keep these five sections in this order — problem → shape → behavior → code → caveats is how a developer reads. Make the headings concrete where a concrete heading is clearly better ("Today: suspending only pauses the scheduler" beats "The problem").
 
@@ -153,7 +150,7 @@ small table — never a copy of tasks.md's checkboxes.>
 
 ## Trade-offs and open questions
 <Roads not taken, one line each, phrased as the question a reviewer would ask.
-Real risks, narrower conflicts, and anything the spec left unresolved. Do not supply an unsupported answer.>
+Real risks, narrower conflicts, and anything the spec left unresolved.>
 
 ## Not covered in this brief
 <One line per artifact, linked, saying how much of it the brief covers, with
@@ -163,11 +160,9 @@ every decision, one line each: its name and the chosen option, linked to its
 heading, marked "explained above" when the body covers it. No rationale here.>
 ```
 
-Put the notice directly under the title, since the top of a file is what an agent reads before deciding what the file is. Fill in the commit with `git rev-parse --short HEAD`; it is a reference point, not proof that all source content was committed. If the source includes uncommitted working-tree edits, say so in the notice. A reader can run `git diff <sha> -- openspec/changes/<name>/` to see tracked changes since that commit.
+Put the notice directly under the title: an agent can still find the brief through a search, and the top of a file is what it reads before deciding what the file is. Fill in the commit with `git rev-parse --short HEAD`; it is a reference point, not proof that all source content was committed. If the source includes uncommitted working-tree edits, say so in the notice. A reader can run `git diff <sha> -- openspec/changes/<name>/` to see tracked changes since that commit.
 
 Drop a section when the change genuinely has nothing for it; don't pad it. "Not covered in this brief" is the exception: every brief has it, because it tells the reader what they still have to read.
-
-**Never invent behavior the spec doesn't state.** If something is unresolved, it belongs in open questions. Specs leave gaps on purpose, and quietly filling them turns a trustworthy doc into a misleading one.
 
 ## 6. Writing moves
 
@@ -194,23 +189,22 @@ Spec register and prose register are different languages. Translate rather than 
 
 ## 7. Cut
 
-Write the draft, then delete. This step is not optional; it's where the document gets good.
+Write the draft, then delete:
 
-- **A fact appearing in four artifacts appears once here.** That redundancy was for machines.
-- **If it survives only because it was in the source, it goes.** Every sentence earns its place by telling this reader something.
-- **Read it as a developer who has never seen the change.** Would you understand it? Would you finish it?
-- **Never cut "Not covered in this brief".** Cutting the body makes that section more important, not less; update its counts after cutting.
+- **A fact that appears in several artifacts appears once here.**
+- **A sentence that survives only because it was in the source goes.** Each one tells this reader something they need.
+- **Update the counts in "Not covered in this brief" after cutting.** The less the body covers, the more the reader relies on that section.
+
+Cutting is done when the brief is clearly shorter than the change's artifacts.
 
 ## 8. Check the brief
 
-Run the checks, fix what they report, and run them again until they all pass:
+Reread the brief and fix what you find:
 
-```bash
-<skill-dir>/scripts/check-brief.sh <brief>.md <change-dir>
-```
-
-`<skill-dir>` is the directory holding this file. `<change-dir>` is the change's directory, `openspec/changes/<name>/` or its `archive/` path. The script needs only Bash and standard tools, and each `FAIL` line says what to fix.
+- The "Not part of the spec" notice sits directly under the title.
+- "Not covered in this brief" is present, and its counts match the artifacts.
+- Spec wording such as `SHALL` or `MUST` has been rewritten as prose, except in quotes.
 
 If the brief has diagrams, check each one as described in [mermaid.md](mermaid.md#checking-the-diagrams).
 
-Finally, have a read-only second agent compare the brief with the change artifacts and any code checked for central claims, when an agent is available. Ask it to flag consequential omissions, unsupported claims, and misleading diagrams, not to rewrite the brief. Also ask it to check that the decision index lists every decision in `design.md` and that the counts in "Not covered in this brief" are correct. Resolve its findings yourself, then rerun affected checks. Without a second agent, make the same comparison directly. Do not treat the review as proof that every requirement is covered; the brief is still a first-pass aid.
+Finally, have a read-only second agent compare the brief with the change artifacts and any code checked for central claims, when an agent is available. Ask it to flag consequential omissions, unsupported claims, and misleading diagrams, not to rewrite the brief. Also ask it to check that the decision index lists every decision in `design.md` and that the counts in "Not covered in this brief" are correct. Resolve its findings yourself, then recheck the affected parts. Without a second agent, make the same comparison directly. Do not treat the review as proof that every requirement is covered; the brief is still a first-pass aid.
