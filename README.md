@@ -82,3 +82,13 @@ for instruction in go-tests; do
   ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.agents/skills/"$instruction"/SKILL.md
 done
 ```
+
+### Check what is installed
+
+To list, for each tool, what is installed from this repo, what is missing, and which links are broken, run from the repo root:
+
+```sh
+scripts/check-install.sh
+```
+
+For each missing item it prints the `ln` command that installs it. It only reads files and changes nothing. It exits with status 1 if a link is broken. Add `-a` to also list skills and instructions installed from elsewhere. Run it with `--help` for details.
