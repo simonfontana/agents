@@ -1,6 +1,6 @@
 ---
 name: go-tests
-description: Go test conventions. Apply when writing, changing, or reviewing `_test.go` code.
+description: Go tests: writing or reviewing `_test.go` files.
 applyTo: "**/*.go"
 paths:
   - "**/*.go"
@@ -8,27 +8,26 @@ paths:
 
 # Testing Conventions
 
-When reviewing, check every rule below against each test you touch.
+When reviewing, check every rule in this file against each test in the change.
 
 ## Rules
 
 - External test package (`package foo_test`) to verify via public API.
-- `t.Parallel()` on every test and subtest unless there is shared mutable state that prevents it (e.g., a package-level singleton, shared temp directory, or serial database).
-- Table-driven tests (`gotests` convention, see [Table-Driven Test Template](#table-driven-test-template)) when there are multiple cases exercising the same code path with different inputs. A single focused test function is fine when there is genuinely only one scenario or when the setup/assertion logic differs significantly per case.
-- Group inputs in a nested `args` struct when there are multiple inputs. Inline when trivial.
+- `t.Parallel()` on every test and subtest unless shared mutable state prevents it (e.g., a package-level singleton, shared temp directory, or serial database).
+- Table-driven tests (see [template](#table-driven-test-template)) when several cases exercise the same code path with different inputs. A single test function when there is one scenario, or when setup and assertions differ per case.
 - Control time with `timing.FixedClock` and explicit advances; wait on async work with channels or `assert.Eventually`/`require.Eventually`. Never `time.Sleep`.
 - `require` for fatal preconditions (early return on failure), `assert` for test assertions.
 
 ## Logging in Tests
 
-Use `zap.New` writing to stdout (the default). `go test` captures stdout and only displays it when a test fails, which gives exactly the right behaviour: logs visible on failure, hidden on success.
+Use `zap.New` writing to stdout (the default). `go test` shows stdout only for failing tests.
 
 ```go
 log := zap.New(zap.WithLevel(l0g.DebugLevel))
 defer log.Close()
 ```
 
-**`observable.NewLogger`** — use only when you must assert on log output (e.g., verifying a specific warning fires). Prefer exposing observable state via a method or return value instead; log assertions are brittle and should be a last resort.
+Assert on state exposed through a method or return value. Use `observable.NewLogger` only when the log line is the behaviour under test (e.g., a specific warning fires); log assertions are brittle.
 
 ## Stubs vs Generated Mocks
 
@@ -38,10 +37,9 @@ Use **generated mocks** (mockery) when:
 
 Use **hand-rolled stubs** when:
 - The interface has many methods but the test only cares about one or two.
-- You need a trivial no-op or fixed-value implementation.
-- The stub is simpler than configuring a mock (no `.On(...)` ceremony needed).
+- You need a no-op or fixed-value implementation.
 
-A stub is just a struct that satisfies the interface with hard-coded or configurable return values. Place stubs at the top of the test file or in a shared `helpers_test.go`.
+Place stubs at the top of the test file, or in `helpers_test.go` when shared.
 
 To generate a mock, add `//mockery:generate: true` above the interface and run `make generate`.
 
@@ -49,16 +47,14 @@ In the test body, set only the mock expectations that are the stimulus or the as
 
 ## Test Helper Organisation
 
-When multiple test files in a package share setup logic, extract helpers into a dedicated `helpers_test.go` (or `mock_helpers_test.go` for mock-specific wiring). This keeps individual test files focused on scenarios, not plumbing.
+When test files in a package share setup, put it in `helpers_test.go` (or `mock_helpers_test.go` for mock wiring), so test files hold scenarios only.
 
-Guidelines:
-- Helper functions that call `t.Helper()` so failures report the caller's line.
-- Name helpers after what they *produce* (`newTestStore`, `createMeasureDoc`) not what they *do internally*.
-- Keep helpers in the same `_test` package — they don't need to be exported.
+- Helpers call `t.Helper()` so failures report the caller's line.
+- Name helpers after what they produce (`newTestStore`, `createMeasureDoc`).
 
 ## Table-Driven Test Template
 
-Replace `Foo`, `Type`, and the `args` fields. Drop `wantErr` and the error branch when the function returns no error.
+Follows the `gotests` layout. Group multiple inputs in the nested `args` struct; inline a single trivial input. Drop `wantErr` and the error branch when the function returns no error.
 
 ```go
 func TestFoo(t *testing.T) {
