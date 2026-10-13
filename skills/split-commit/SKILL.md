@@ -1,12 +1,12 @@
 ---
 name: split-commit
-description: 'Split one named commit into a series of smaller, standalone commits on a new branch. Use when the user asks to split or break up a specific commit (e.g. "split HEAD", "break abc123 into smaller commits").'
+description: 'Split one commit into a series of standalone commits on a new branch. Use when the user asks to split a specific commit.'
 argument-hint: 'Commit to split (e.g. HEAD, abc123)'
 ---
 
 # Split Commit
 
-Split one named commit into a series of standalone commits on a new branch. The original branch stays as it is.
+Split one named commit into a series of standalone commits on a new branch. The original branch stays as it is; never delete, rename over, or push a branch.
 
 ## Standalone commits
 
@@ -60,7 +60,7 @@ Wait for approval before changing anything.
 
 ### 6. Build the series
 
-Create `<branch>-split` from the commit's parent, where `<branch>` is the current branch; if the name is taken, use `<branch>-split-2`, `-3`, and so on. Use another git method only if the user names one. The new branch ends with the last commit of the series; commits that came after the original commit stay only on the original branch.
+Create `<branch>-split` from the commit's parent, where `<branch>` is the current branch; if the name is taken, use `<branch>-split-2`, `-3`, and so on. Build it with the steps below; use another git method (such as interactive rebase) only if the user names one. The new branch ends with the last commit of the series; commits that came after the original commit stay only on the original branch.
 
 For each commit in order:
 1. Write each file to its intended state for this commit, then `git add <file>`. For a file whose changes all belong to this commit, use `git checkout <original> -- <file>`.
@@ -82,7 +82,7 @@ Done when the diff is empty, apart from the planned differences.
 
 ### 8. Report
 
-Keep all work local and leave every existing branch where it is; never delete, rename over, or push a branch. Report exactly these items, with no suggested next steps:
+Report exactly these items:
 - The new branch name and the original commit
 - `git log --oneline <parent>..<branch>-split`
 - The result of the final diff (empty, or the planned differences)
