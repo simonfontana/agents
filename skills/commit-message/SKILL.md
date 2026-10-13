@@ -19,8 +19,6 @@ not read the changed code.
      ```sh
      git show --format= <commit>
      ```
-
-   - If the user describes the change instead, use the description.
 2. If there is an existing message, from the user or from a commit, write
    your own from the diff alone and read the existing one only at step 7;
    "Improving an existing message" gives the reason. Until then, read an
@@ -37,15 +35,15 @@ not read the changed code.
    git show <commit>:<path>
    git log <commit>^ -- <path>
    ```
-4. Work out what prompted the change, what it changes, and why this
-   approach works. Use only facts that the code or the user supports.
-   Never invent a cause, symptom, or impact.
+4. Work out the chain: what prompted the change, what it changes, and
+   why this approach works. Use only facts that the code or the user
+   supports. Never invent a cause, symptom, or impact.
 5. Write the message by the rules below.
-6. Reread it as a developer who has not seen the diff. They should be able
-   to tell what prompted the change, what it changes, and why the approach
-   works. Remove every detail that does not help with one of these. Then
-   check every name copied from the code, such as a camelCase or
-   snake_case identifier: keep it only if it passes "Words and names".
+6. Reread it as the reader, who has not seen the diff. They should be
+   able to follow the whole chain from the message alone. Remove every
+   detail outside the chain. Then check every name copied from the
+   code, such as a camelCase or snake_case identifier: keep it only if
+   it passes "Words and names".
 7. If there is an existing message, read and compare it now; see
    "Improving an existing message". For an existing commit, run
    `git log -1 --format=%B <commit>`.
@@ -68,7 +66,8 @@ not read the changed code.
    - If the staged changes contain unrelated concerns, write one message
      that covers all of them. After the block, add one line that names the
      separate concerns and says they would be better as separate commits.
-   - Do not run `git commit` unless the user asks.
+   - Stop after showing the message; run `git commit` only if the user
+     asks.
 
 ## Subject
 
@@ -83,13 +82,13 @@ not read the changed code.
 ## Body
 
 - Omit the body when the subject says everything the reader needs.
-- Otherwise, give the full chain of cause, effect, and change, and nothing
-  more. One to three short paragraphs is typical. Stop once the chain is
-  complete; do not end with a general summary of the fix.
+- Otherwise, give the full chain and nothing more. One to three short
+  paragraphs is typical. End the body on the last link of the chain,
+  without a closing summary.
 - For a fix, say when the failure happens, what goes wrong, and why the
   change prevents it. For other changes, say what prompted the change, what
   it makes possible or simpler, and any constraint that shaped the approach.
-- Explain behaviour, not edits. Do not walk through the diff.
+- Explain behaviour, not edits.
 - Describe the code without this change in the present tense: "Atlas Queue
   reassigns the job", not "Atlas Queue reassigned the job". The reader
   reads the message together with its diff. Describe the change in the
