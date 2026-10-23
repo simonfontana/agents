@@ -113,11 +113,7 @@ fi
 echo
 
 echo "Instructions"
-check "VS Code" ~/.config/Code/User/prompts "instructions/*.instructions.md" ".instructions.md"
-for profile in ~/.config/Code/User/profiles/*/prompts; do
-  id=${profile%/prompts}
-  check "VS Code profile ${id##*/}" "$profile" "instructions/*.instructions.md" ".instructions.md"
-done
+check "GitHub Copilot" ~/.copilot/instructions "instructions/*.instructions.md" ".instructions.md"
 check "Claude Code" ~/.claude/rules "instructions/*.instructions.md" ".md"
 
 exit "$problems"

@@ -22,7 +22,7 @@ Agent skills and instructions that encode reusable conventions and workflows.
 
 Each **skill** lives in its own directory under `skills/` around a `SKILL.md` file with a YAML frontmatter `description` that controls when an agent automatically invokes it. The agent decides whether to load a skill. Some skills ship supporting scripts alongside it; `SKILL.md` explains when they are needed and how to set them up.
 
-Each **instruction** is a single file under `instructions/`. Its frontmatter lists file patterns, and the tool loads the instruction whenever a matching file is in the agent's context, so the agent does not decide. The same patterns are given twice, as `applyTo` for VS Code and as `paths` for Claude Code. If no matching file is in context yet, the agent only sees the instruction's description and must choose to read it.
+Each **instruction** is a single file under `instructions/`. Its frontmatter lists file patterns, and the tool loads the instruction whenever a matching file is in the agent's context, so the agent does not decide. The same patterns are given twice, as `applyTo` for GitHub Copilot and as `paths` for Claude Code. If no matching file is in context yet, the agent only sees the instruction's description and must choose to read it.
 
 ## Installation
 
@@ -49,14 +49,14 @@ If `~/.claude/skills/` already exists, move or merge it first, because `ln` will
 
 Instructions that apply to file patterns have no shared format across tools, so each tool needs its own setup.
 
-#### VS Code (GitHub Copilot)
+#### GitHub Copilot
 
-Link each instruction into your user prompts folder. Run from the repo root and remove any names you do not want. The path below is for Linux. If you use a non-default VS Code profile, the folder is `~/.config/Code/User/profiles/<profile-id>/prompts` instead.
+Link each instruction into `~/.copilot/instructions/`, which Copilot reads in VS Code and in Copilot CLI. Run from the repo root and remove any names you do not want.
 
 ```sh
-mkdir -p ~/.config/Code/User/prompts
+mkdir -p ~/.copilot/instructions
 for instruction in go-tests top-down; do
-  ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.config/Code/User/prompts/"$instruction".instructions.md
+  ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.copilot/instructions/"$instruction".instructions.md
 done
 ```
 
