@@ -16,6 +16,7 @@ Agent skills and instructions that encode reusable conventions and workflows.
 | Instruction | Applies to | Description |
 |-------------|------------|-------------|
 | [`go-tests`](instructions/go-tests.instructions.md) | `**/*.go` | Write and review Go tests following table-driven, parallel, and mock conventions |
+| [`top-down`](instructions/top-down.instructions.md) | `**` | Order functions so each call appears above the function's definition, reading top-down |
 
 ## Usage
 
@@ -54,7 +55,7 @@ Link each instruction into your user prompts folder. Run from the repo root and 
 
 ```sh
 mkdir -p ~/.config/Code/User/prompts
-for instruction in go-tests; do
+for instruction in go-tests top-down; do
   ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.config/Code/User/prompts/"$instruction".instructions.md
 done
 ```
@@ -65,7 +66,7 @@ Link each instruction into `~/.claude/rules/`. Run from the repo root and remove
 
 ```sh
 mkdir -p ~/.claude/rules
-for instruction in go-tests; do
+for instruction in go-tests top-down; do
   ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.claude/rules/"$instruction".md
 done
 ```
@@ -77,7 +78,7 @@ Other tools, for example Codex, do not support instructions that apply to file p
 To install instructions as skills, run from the repo root and remove any names you do not want:
 
 ```sh
-for instruction in go-tests; do
+for instruction in go-tests top-down; do
   mkdir -p ~/.agents/skills/"$instruction"
   ln -sT "$PWD/instructions/$instruction.instructions.md" ~/.agents/skills/"$instruction"/SKILL.md
 done
